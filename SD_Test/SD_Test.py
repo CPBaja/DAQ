@@ -2,7 +2,7 @@
 import serial
 import time
 
-arduinoSerial = serial.Serial('/dev/tty.usbmodem14601', 9600, timeout=100)
+arduinoSerial = serial.Serial('/dev/tty.usbmodem50943701', 9600, timeout=100)
 
 time.sleep(5)
 
@@ -11,9 +11,9 @@ testFilename = "data.csv"
 with open(testFilename, "w+") as file:
     pass
 
-for byteCount in range(1, 1000):
+for byteCount in range(0, 100000, 5000):
     
-    for test in range(0, 5):
+    for test in range(0, 1):
         byteStr = str(byteCount)
         arduinoSerial.write(byteStr.encode())
         result = arduinoSerial.readline().decode().strip()

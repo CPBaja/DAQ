@@ -3,24 +3,22 @@
 
 #include "Buffer.h"
 
-const int MAX_BUFFER_SIZE = 200;
-
 class Buffer  
 {
 
     public:
-        Buffer();
-        int GetSizeInBytes();
+        Buffer(int maxByteSize);
         void Append(int value, unsigned long timestamp);
         void ClearBuffer();
+
         int GetValue(int index);
         unsigned long GetTime(int index);
-        long _headIndex;
      
     private:
-        int _dataBuf[MAX_BUFFER_SIZE];
-        unsigned long _timeBuf[MAX_BUFFER_SIZE];
-
+        int * _dataBuf;
+        unsigned long * _timeBuf;
+        int _headIndex;
+        int _maxSize;
 };
 
 #endif

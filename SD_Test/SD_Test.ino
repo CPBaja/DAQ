@@ -8,10 +8,11 @@ void writeToSD(String fileName, int dataWriteSize)
 {
     file = SD.open("test0.txt", O_CREAT | O_WRITE);
     
-    for(int i = 0;i < dataWriteSize;i++)
+    for(int i = 0;i < dataWriteSize - 1;i++)
     {
         file.print(DATA);
     }
+    file.print('\n');
     
     file.flush();
     file.close();
