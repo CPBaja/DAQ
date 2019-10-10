@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "Sensor.h"
+#include "Buffer.h"
 
 class Sensor  
 {
@@ -11,11 +12,11 @@ class Sensor
         Sensor(const int pin, char identifier);
         void ReadSensor();
         void PrintSensor();
-        void WriteSensorToSD();
+        void WriteSensorToSD(File file, String fileName);
      
     private:
-        const int _pin;
-        Buffer * _buffer;
+        int _pin;
+        Buffer _buffer;
 };
 
 #endif

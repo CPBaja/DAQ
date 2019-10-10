@@ -1,14 +1,16 @@
 #include <Arduino.h>
+#include <SD.h>
+
 #include "Buffer.h"
 
 // Constructor for the buffer.
-// Requires the maximum number of slots we want for the buffer.
-Buffer::Buffer(char identifier)
+Buffer::Buffer()
 {
-    //_dataBuf = new int[size * sizeof(int)];
-    //_timeBuf = new unsigned long[size * sizeof(unsigned long)];
     _headIndex = 0;
-    //_maxSize = size;
+}
+
+void Buffer::SetIdentifier(char identifier)
+{
     _identifier = identifier;
 }
 
@@ -60,6 +62,28 @@ void Buffer::PrintBuffer()
         Serial.print(":");
     }
     Serial.println();
+}
+
+void Buffer::WriteBufferToSD(File file, String fileName)
+{
+    char __dataFileName[sizeof(fileName)];
+    fileName.toCharArray(__dataFileName, sizeof(__dataFileName));
+    file = SD.open(__dataFileName, FILE_WRITE);
+    
+    file.print(_identifier);
+    file.print(":");
+    
+    for(int index = 0;index < _headIndex;index++)
+    {
+        file.print(_dataBuf[index]);
+        file.print(":");
+        file.print(_timeBuf[index]);
+        file.print(":");
+    }
+    file.print('\n');
+    
+    file.flush();
+    file.close();
 }
 
 // 'Clears' the buffer. Really just resets the head index. Very fast.

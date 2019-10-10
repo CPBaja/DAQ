@@ -11,7 +11,7 @@ testFilename = "data.csv"
 with open(testFilename, "w+") as file:
     pass
 
-for byteCount in range(0, 5000, 10):
+for byteCount in range(0, 20000, 100):
     
     for test in range(0, 5):
         byteStr = str(byteCount)

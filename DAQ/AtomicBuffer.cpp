@@ -3,12 +3,15 @@
 
 // Constructor for the atomic buffer, which is really just two buffers.
 // Requires the maximum number of slots we want for the buffer.
-AtomicBuffer::AtomicBuffer(char identifier)
+AtomicBuffer::AtomicBuffer()
 {
-    _primaryBuffer = new Buffer(identifier);
-    _secondaryBuffer = new Buffer(identifier);
     _currentBuffer = '0';
-    _identifier = identifier;
+}
+
+void AtomicBuffer::SetIdentifier(char identifier)
+{
+    _primaryBuffer.SetIdentifier(identifier);
+    _secondaryBuffer.SetIdentifier(identifier);
 }
 
 // Appends a value to the end of the buffer.
@@ -17,11 +20,11 @@ int AtomicBuffer::Append(int value, unsigned long timestamp)
 {
     if(_currentBuffer == '0')
     {
-        return(_primaryBuffer->Append(value, timestamp));
+        return(_primaryBuffer.Append(value, timestamp));
     }
     else
     {
-        return(_secondaryBuffer->Append(value, timestamp));
+        return(_secondaryBuffer.Append(value, timestamp));
     }
 }
 
@@ -30,11 +33,11 @@ int AtomicBuffer::GetValue(int index)
 {
     if(_currentBuffer == '0')
     {
-        return(_primaryBuffer->GetValue(index));
+        return(_primaryBuffer.GetValue(index));
     }
     else
     {
-        return(_secondaryBuffer->GetValue(index));
+        return(_secondaryBuffer.GetValue(index));
     }
 }
 
@@ -43,11 +46,11 @@ unsigned long AtomicBuffer::GetTime(int index)
 {
     if(_currentBuffer == '0')
     {
-        return(_primaryBuffer->GetTime(index));
+        return(_primaryBuffer.GetTime(index));
     }
     else
     {
-        return(_secondaryBuffer->GetTime(index));
+        return(_secondaryBuffer.GetTime(index));
     }
 }
 
@@ -56,11 +59,11 @@ int AtomicBuffer::GetSize()
 {
     if(_currentBuffer == '0')
     {
-        return(_primaryBuffer->GetSize());
+        return(_primaryBuffer.GetSize());
     }
     else
     {
-        return(_secondaryBuffer->GetSize());
+        return(_secondaryBuffer.GetSize());
     }
 }
 
@@ -71,11 +74,25 @@ void AtomicBuffer::PrintBuffer()
 
     if(_currentBuffer == '0')
     {
-        return(_secondaryBuffer->PrintBuffer());
+        return(_secondaryBuffer.PrintBuffer());
     }
     else
     {
-        return(_primaryBuffer->PrintBuffer());
+        return(_primaryBuffer.PrintBuffer());
+    }
+}
+
+void AtomicBuffer::WriteBufferToSD(File file, String fileName)
+{
+    Swap();
+
+    if(_currentBuffer == '0')
+    {
+        return(_secondaryBuffer.WriteBufferToSD(file, fileName));
+    }
+    else
+    {
+        return(_primaryBuffer.WriteBufferToSD(file, fileName));
     }
 }
 
@@ -84,11 +101,11 @@ void AtomicBuffer::ClearBuffer()
 {
     if(_currentBuffer == '0')
     {
-        return(_primaryBuffer->ClearBuffer());
+        return(_primaryBuffer.ClearBuffer());
     }
     else
     {
-        return(_secondaryBuffer->ClearBuffer());
+        return(_secondaryBuffer.ClearBuffer());
     }
 }
 

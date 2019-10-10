@@ -1,24 +1,28 @@
 #include <Arduino.h>
+#include <SD.h>
 
 #include "Buffer.h"
 #include "AtomicBuffer.h"
+#include "Sensor.h"
+int i = 0;
+File file;
 
-Buffer buf0('A');
-Buffer buf1('B');
-Buffer buf2('C');
-Buffer buf3('D');
-Buffer buf4('E');
-Buffer buf5('F');
-Buffer buf6('G');
-Buffer buf7('H');
-Buffer buf8('I');
-Buffer buf9('J');
-Buffer buf10('K');
-
-AtomicBuffer abuf0('Z');
-AtomicBuffer abuf1('Y');
-AtomicBuffer abuf2('X');
-AtomicBuffer abuf3('W');
+Sensor sens0(14, 'A');
+Sensor sens1(14, 'A');
+Sensor sens2(14, 'A');
+Sensor sens3(14, 'A');
+Sensor sens4(14, 'A');
+Sensor sens5(14, 'A');
+Sensor sens6(14, 'A');
+Sensor sens7(14, 'A');
+Sensor sens8(14, 'A');
+Sensor sens9(14, 'A');
+Sensor sens10(14, 'A');
+Sensor sens11(14, 'A');
+Sensor sens12(14, 'A');
+Sensor sens13(14, 'A');
+Sensor sens14(14, 'A');
+Buffer buf0;
 
 const int chipSelect = BUILTIN_SDCARD;
 
@@ -26,6 +30,8 @@ void setup()
 {
   Serial.begin(9600);
   SD.begin(chipSelect);
+  buf0.SetIdentifier('A');
+
 
   delay(1000);
   // Delay to allow the Serial and SD to setup. Probably not needed?
@@ -40,12 +46,8 @@ void loop()
   }
   else
   {
+    buf0.WriteBufferToSD(file, "test3.txt");
     buf0.ClearBuffer();
-    Serial.print("Swap ");
-    Serial.print(i);
-    Serial.print(" ");
-    Serial.println(micros());
-    i++;
   }
 
 }

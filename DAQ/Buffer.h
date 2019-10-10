@@ -2,6 +2,8 @@
 #define BUFFER_H
 
 #include <Arduino.h>
+#include <SD.h>
+
 #include "Buffer.h"
 
 const int _maxSize = 1000;
@@ -10,13 +12,15 @@ class Buffer
 {
 
     public:
-        Buffer(char identifier);
+        Buffer();
+        void SetIdentifier(char identifier);
         int Append(int value, unsigned long timestamp);
         int GetValue(int index);
         unsigned long GetTime(int index);
         int GetSize();
         int GetMaxSize();
         void PrintBuffer();
+        void WriteBufferToSD(File file, String fileName);
         void ClearBuffer();
      
     private:
