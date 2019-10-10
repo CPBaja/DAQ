@@ -1,12 +1,12 @@
 #include <SD.h>
 
-const byte DATA = 'F';
+const String DATA = "F";
 
 File file;
 
 void writeToSD(String fileName, int dataWriteSize)
 {
-    file = SD.open("test0.txt", O_CREAT | O_WRITE);
+    file = SD.open(fileName, O_CREAT | O_WRITE);
     
     for(int i = 0;i < dataWriteSize - 1;i++)
     {
@@ -30,7 +30,7 @@ void setup()
 {
      Serial.begin(9600);
      Serial.setTimeout(1000);
-     SD.begin(10);
+     SD.begin(BUILTIN_SDCARD);
      
      // Allow serial port to setup.
      delay(1000);

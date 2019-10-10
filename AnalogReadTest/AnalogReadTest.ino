@@ -1,8 +1,8 @@
-const int maxSize = 1000;
+const int maxSize = 2;
 
 const int sensorPin = A0;    // select the input pin for the potentiometer
-int sensorReadings[maxSize];
-unsigned long timestampReadings[maxSize];
+int sensorReadings[0];
+unsigned long timestampReadings[02];
 int headIndex = 0;
 unsigned long startTime;
 unsigned long resultTime;
@@ -18,18 +18,18 @@ void loop()
   if(headIndex >= maxSize)
   {
     resultTime = micros() - startTime;
-    /*Serial.print(maxSize);
+    Serial.print(maxSize);
     Serial.print(" values read and saved in ");
     Serial.print(resultTime);
-    Serial.println(" microseconds.");*/
+    Serial.println(" microseconds.");
     headIndex = 0;
     startTime = micros();
     for(int i = 0; i < maxSize; i++)
     {
-      Serial.print(sensorReadings[i]);
-      Serial.print(",");
+      //Serial.print(sensorReadings[i]);
+      //Serial.print(",");
     }
-    Serial.println();
+    //Serial.println();
   }
 
   sensorReadings[headIndex] = analogRead(sensorPin);
