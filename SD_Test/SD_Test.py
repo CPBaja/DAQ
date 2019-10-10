@@ -11,9 +11,9 @@ testFilename = "data.csv"
 with open(testFilename, "w+") as file:
     pass
 
-for byteCount in range(0, 100000, 5000):
+for byteCount in range(0, 5000, 10):
     
-    for test in range(0, 1):
+    for test in range(0, 5):
         byteStr = str(byteCount)
         arduinoSerial.write(byteStr.encode())
         result = arduinoSerial.readline().decode().strip()

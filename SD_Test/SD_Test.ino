@@ -6,7 +6,9 @@ File file;
 
 void writeToSD(String fileName, int dataWriteSize)
 {
-    file = SD.open(fileName, O_CREAT | O_WRITE);
+    char __dataFileName[sizeof(fileName)];
+    fileName.toCharArray(__dataFileName, sizeof(__dataFileName));
+    file = SD.open(__dataFileName, FILE_WRITE);
     
     for(int i = 0;i < dataWriteSize - 1;i++)
     {
@@ -22,7 +24,7 @@ void serialFlush()
 {
   while(Serial.available() > 0)
   {
-    char t = Serial.read();
+    Serial.read();
   }
 }  
 
@@ -41,7 +43,7 @@ void loop()
 {
     while(Serial.available() > 0)
     {
-      String fileName = "test0.txt";
+      String fileName = "test2.txt";
       // The SD library writes data in 512 byte blocks.
       // Setting the DATA_WRITE_SIZE larger than 512 may cause the buffer to be overwritten.
       int dataWriteSize = Serial.parseInt();

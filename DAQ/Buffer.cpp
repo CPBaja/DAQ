@@ -1,13 +1,14 @@
+#include <Arduino.h>
 #include "Buffer.h"
 
 // Constructor for the buffer.
 // Requires the maximum number of slots we want for the buffer.
-Buffer::Buffer(int size, char identifier)
+Buffer::Buffer(char identifier)
 {
-    _dataBuf = new int[size * sizeof(int)];
-    _timeBuf = new unsigned long[size * sizeof(unsigned long)];
+    //_dataBuf = new int[size * sizeof(int)];
+    //_timeBuf = new unsigned long[size * sizeof(unsigned long)];
     _headIndex = 0;
-    _maxSize = size;
+    //_maxSize = size;
     _identifier = identifier;
 }
 
@@ -40,6 +41,25 @@ unsigned long Buffer::GetTime(int index)
 int Buffer::GetSize()
 {
     return(_headIndex);
+}
+
+int Buffer::GetMaxSize()
+{
+    return(_maxSize);
+}
+
+void Buffer::PrintBuffer()
+{
+    Serial.print(_identifier);
+    Serial.print(":");
+    for(int index = 0;index < _maxSize;index++)
+    {
+        Serial.print(_dataBuf[index]);
+        Serial.print(":");
+        Serial.print(_timeBuf[index]);
+        Serial.print(":");
+    }
+    Serial.println();
 }
 
 // 'Clears' the buffer. Really just resets the head index. Very fast.

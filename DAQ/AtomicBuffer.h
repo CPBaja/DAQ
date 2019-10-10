@@ -7,16 +7,16 @@ class AtomicBuffer
 {
 
     public:
-        AtomicBuffer(int maxSize, char identifier);
+        AtomicBuffer(char identifier);
         int Append(int value, unsigned long timestamp);
         int GetValue(int index);
         unsigned long GetTime(int index);
         int GetSize();
         void PrintBuffer();
         void ClearBuffer();
-        void Swap();
 
     private:
+        void Swap();
         char _identifier;
         unsigned char _currentBuffer;
         Buffer * _primaryBuffer;

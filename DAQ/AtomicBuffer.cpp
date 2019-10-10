@@ -3,10 +3,10 @@
 
 // Constructor for the atomic buffer, which is really just two buffers.
 // Requires the maximum number of slots we want for the buffer.
-AtomicBuffer::AtomicBuffer(int size, char identifier)
+AtomicBuffer::AtomicBuffer(char identifier)
 {
-    _primaryBuffer = new Buffer(size, identifier);
-    _secondaryBuffer = new Buffer(size, identifier);
+    _primaryBuffer = new Buffer(identifier);
+    _secondaryBuffer = new Buffer(identifier);
     _currentBuffer = '0';
     _identifier = identifier;
 }
@@ -64,34 +64,43 @@ int AtomicBuffer::GetSize()
     }
 }
 
-// Clears the buffer that isn't the current buffer.
-// Why? Because the _currentBuffer is the one we're always ready to write data to.
-// When we clear the buffer, it's because we just wrote the data to SD.
-// When we're writing data to SD, we don't want to add any more data into that buffer.
-// Therefore, the current buffer is never written to the SD.
-// So we never clear the current buffer.
+// Swaps the current buffer and prints the previous current buffer.
+void AtomicBuffer::PrintBuffer()
+{
+    Swap();
+
+    if(_currentBuffer == '0')
+    {
+        return(_secondaryBuffer->PrintBuffer());
+    }
+    else
+    {
+        return(_primaryBuffer->PrintBuffer());
+    }
+}
+
+// Clears the current buffer.
 void AtomicBuffer::ClearBuffer()
 {
     if(_currentBuffer == '0')
     {
-        return(_secondaryBuffer->ClearBuffer());
+        return(_primaryBuffer->ClearBuffer());
     }
     else
     {
-        return(_primaryBuffer->ClearBuffer());
+        return(_secondaryBuffer->ClearBuffer());
     }
 }
 
+// Swaps the current buffer.
 void AtomicBuffer::Swap()
 {
     if(_currentBuffer == '0')
     {
-        _primaryBuffer->ClearBuffer();
         _currentBuffer = '1';
     }
     else
     {
-        _secondaryBuffer->ClearBuffer();
         _currentBuffer = '0';
     }
 }

@@ -3,49 +3,44 @@
 #include "Buffer.h"
 #include "AtomicBuffer.h"
 
-const int maxSize = 100;
+Buffer buf0('A');
+Buffer buf1('B');
+Buffer buf2('C');
+Buffer buf3('D');
+Buffer buf4('E');
+Buffer buf5('F');
+Buffer buf6('G');
+Buffer buf7('H');
+Buffer buf8('I');
+Buffer buf9('J');
+Buffer buf10('K');
 
-Buffer buf0(maxSize, 'A');
-Buffer buf1(maxSize, 'B');
-Buffer buf2(maxSize, 'C');
-Buffer buf3(maxSize, 'D');
-Buffer buf4(maxSize, 'E');
-Buffer buf5(maxSize, 'F');
-Buffer buf6(maxSize, 'G');
-Buffer buf7(maxSize, 'H');
-Buffer buf8(maxSize, 'I');
-Buffer buf9(maxSize, 'J');
-Buffer buf10(maxSize, 'K');
+AtomicBuffer abuf0('Z');
+AtomicBuffer abuf1('Y');
+AtomicBuffer abuf2('X');
+AtomicBuffer abuf3('W');
 
-AtomicBuffer abuf0(maxSize, 'Z');
-AtomicBuffer abuf1(maxSize, 'Y');
-AtomicBuffer abuf2(maxSize, 'X');
-AtomicBuffer abuf3(maxSize, 'W');
-
-int i = 0;
-unsigned long startTime;
-unsigned long resultTime;
+const int chipSelect = BUILTIN_SDCARD;
 
 void setup()
 {
   Serial.begin(9600);
+  SD.begin(chipSelect);
 
-  while(Serial.available() == 0)
-  {
-    
-  }
+  delay(1000);
+  // Delay to allow the Serial and SD to setup. Probably not needed?
 }
 
 void loop()
 {
-  int head = abuf0.GetSize();
-  if(head < maxSize)
+  int head = buf0.GetSize();
+  if(head < buf0.GetMaxSize())
   {
-    abuf0.Append(100, micros());
+    buf0.Append(100, micros());
   }
   else
   {
-    abuf0.Swap();
+    buf0.ClearBuffer();
     Serial.print("Swap ");
     Serial.print(i);
     Serial.print(" ");
