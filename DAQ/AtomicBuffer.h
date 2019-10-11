@@ -14,7 +14,7 @@ class AtomicBuffer
         unsigned long GetTime(int index);
         int GetSize();
         void PrintBuffer();
-        void WriteBufferToSD(File file, String fileName);
+        void WriteBufferToSD(String fileName);
         void ClearBuffer();
 
     private:

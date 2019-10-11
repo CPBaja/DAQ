@@ -82,17 +82,17 @@ void AtomicBuffer::PrintBuffer()
     }
 }
 
-void AtomicBuffer::WriteBufferToSD(File file, String fileName)
+void AtomicBuffer::WriteBufferToSD(String fileName)
 {
     Swap();
 
     if(_currentBuffer == '0')
     {
-        return(_secondaryBuffer.WriteBufferToSD(file, fileName));
+        return(_secondaryBuffer.WriteBufferToSD(fileName));
     }
     else
     {
-        return(_primaryBuffer.WriteBufferToSD(file, fileName));
+        return(_primaryBuffer.WriteBufferToSD(fileName));
     }
 }
 

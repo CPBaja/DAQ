@@ -64,11 +64,11 @@ void Buffer::PrintBuffer()
     Serial.println();
 }
 
-void Buffer::WriteBufferToSD(File file, String fileName)
+void Buffer::WriteBufferToSD(String fileName)
 {
     char __dataFileName[sizeof(fileName)];
     fileName.toCharArray(__dataFileName, sizeof(__dataFileName));
-    file = SD.open(__dataFileName, FILE_WRITE);
+    File file = SD.open(__dataFileName, FILE_WRITE);
     
     file.print(_identifier);
     file.print(":");

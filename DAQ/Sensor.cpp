@@ -33,9 +33,9 @@ void Sensor::PrintSensor()
     _buffer.PrintBuffer();
 }
 
-void Sensor::WriteSensorToSD(File file, String fileName)
+void Sensor::WriteSensorToSD(String fileName)
 {
-    _buffer.WriteBufferToSD(file, fileName);
+    _buffer.WriteBufferToSD(fileName);
 }
 
 void Sensor::ClearSensor()

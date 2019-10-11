@@ -14,7 +14,7 @@ class Sensor
         void ReadSensor();
         bool IsFull();
         void PrintSensor();
-        void WriteSensorToSD(File file, String fileName);
+        void WriteSensorToSD(String fileName);
         void ClearSensor();
      
     private:

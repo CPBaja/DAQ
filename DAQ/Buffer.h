@@ -20,7 +20,7 @@ class Buffer
         int GetSize();
         int GetMaxSize();
         void PrintBuffer();
-        void WriteBufferToSD(File file, String fileName);
+        void WriteBufferToSD(String fileName);
         void ClearBuffer();
      
     private:
