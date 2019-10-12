@@ -4,9 +4,13 @@
 #include "Buffer.h"
 #include "AtomicBuffer.h"
 #include "Sensor.h"
-int i = 0;
 
-int timeDelay = 9500;
+/* Sensor Parameters */
+// If you want to read as fast as possible, set timeDelay to 0.
+const int readingsPerSecond = 100;
+// int(1000000 / readingsPerSecond * 0.95) is the formula.
+// We just need to be within 95% of the correct time delay and we'll be fine.
+const int timeDelay = int(1000000 / readingsPerSecond * 0.95);
 Sensor sens0(14, 'A', timeDelay);
 Sensor sens1(15, 'B', timeDelay);
 Sensor sens2(16, 'C', timeDelay);
@@ -18,80 +22,58 @@ Sensor sens7(21, 'H', timeDelay);
 Sensor sens8(22, 'I', timeDelay);
 Sensor sens9(23, 'J', timeDelay);
 
+const int sensorCount = 10;
+Sensor * allSensors[sensorCount] = {&sens0, &sens1, &sens2, &sens3, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
+
+/* SD Card Parameters */
 const int chipSelect = BUILTIN_SDCARD;
-
-unsigned long startTime;
-String saveFileName = "4.txt";
-
-File file;
+unsigned long fileNameChangeTime;
+const unsigned long fileNameChangeInterval = 1000000;
+int fileNameCounter = 0;
+String saveFileName = "0.txt";
 
 void setup()
 {
     Serial.begin(9600);
     SD.begin(chipSelect);
-  
-    delay(1000);
-    // Delay to allow the Serial and SD to setup. Probably not needed?
 
-
-    startTime = micros();
+    while(!Serial)
+    {
+        ; // Wait for serial port to connect. Needed for native USB port only.
+    }
+    
+    fileNameChangeTime = micros();
 }
 
 void loop()
 {
+    // Checks each sensor to see if they're ready to read.
+    // Could be slightly faster if we know every sensor has the same interval.
+    // If the sensor is ready to read, it'll read.
+    for(int i = 0;i < sensorCount;i++)
+    {
+        if(allSensors[i]->ReadyToRead())
+        {
+            allSensors[i]->ReadSensor();
+        }
 
-    // They're all the same size buffer, so we only need to check one.
-    if(sens0.ReadyToRead())
-    {
-        sens0.ReadSensor();
-        sens1.ReadSensor();
-        sens2.ReadSensor();
-        sens3.ReadSensor();
-        sens4.ReadSensor();
-        sens5.ReadSensor();
-        sens6.ReadSensor();
-        sens7.ReadSensor();
-        sens8.ReadSensor();
-        sens9.ReadSensor();
+        // One reading for every sensor will be slightly delayed when we output data.
+        // 
+        if(allSensors[i]->IsFull())
+        {
+            allSensors[i]->PrintSensor();
+            allSensors[i]->WriteSensorToSD(saveFileName);
+            allSensors[i]->ClearSensor();
+        }
     }
-  
-    if(sens0.IsFull())
+}
+
+void updateFileName()
+{
+    if(micros() - fileNameChangeTime > fileNameChangeInterval)
     {
-        unsigned long printTime = micros();
-        sens0.PrintSensor();
-        //sens0.WriteSensorToSD(saveFileName);
-        sens0.ClearSensor();
-        sens1.PrintSensor();
-        //sens1.WriteSensorToSD(saveFileName);
-        sens1.ClearSensor();
-        sens2.PrintSensor();
-        //sens2.WriteSensorToSD(saveFileName);
-        sens2.ClearSensor();
-        sens3.PrintSensor();
-        //sens3.WriteSensorToSD(saveFileName);
-        sens3.ClearSensor();
-        sens4.PrintSensor();
-        //sens4.WriteSensorToSD(saveFileName);
-        sens4.ClearSensor();
-        sens5.PrintSensor();
-        //sens5.WriteSensorToSD(saveFileName);
-        sens5.ClearSensor();
-        sens6.PrintSensor();
-        //sens6.WriteSensorToSD(saveFileName);
-        sens6.ClearSensor();
-        sens7.PrintSensor();
-        //sens7.WriteSensorToSD(saveFileName);
-        sens7.ClearSensor();
-        sens8.PrintSensor();
-        //sens8.WriteSensorToSD(saveFileName);
-        sens8.ClearSensor();
-        sens9.PrintSensor();
-        //sens9.WriteSensorToSD(saveFileName);
-        sens9.ClearSensor();
-        unsigned long endTime = micros() - startTime;
-        //Serial.println(endTime);
-        endTime = micros() - printTime;
-        //Serial.println(endTime);
-        startTime = micros();
+        fileNameCounter++;
+        saveFileName = String(fileNameCounter) + ".txt";
+        fileNameChangeTime = micros();
     }
 }
