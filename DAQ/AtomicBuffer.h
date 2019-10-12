@@ -13,12 +13,13 @@ class AtomicBuffer
         int GetValue(int index);
         unsigned long GetTime(int index);
         int GetSize();
+        int GetMaxSize();
         void PrintBuffer();
         void WriteBufferToSD(String fileName);
         void ClearBuffer();
+        void Swap();
 
     private:
-        void Swap();
         unsigned char _currentBuffer;
         Buffer _primaryBuffer;
         Buffer _secondaryBuffer;

@@ -67,6 +67,18 @@ int AtomicBuffer::GetSize()
     }
 }
 
+int AtomicBuffer::GetMaxSize()
+{
+    if(_currentBuffer == '0')
+    {
+        return(_primaryBuffer.GetMaxSize());
+    }
+    else
+    {
+        return(_secondaryBuffer.GetMaxSize());
+    }
+}
+
 // Swaps the current buffer and prints the previous current buffer.
 void AtomicBuffer::PrintBuffer()
 {
@@ -96,16 +108,17 @@ void AtomicBuffer::WriteBufferToSD(String fileName)
     }
 }
 
-// Clears the current buffer.
+// Clears the opposite buffer.
+// Why? Because we're going to swap the current buffer before clearing it.
 void AtomicBuffer::ClearBuffer()
 {
     if(_currentBuffer == '0')
     {
-        return(_primaryBuffer.ClearBuffer());
+        return(_secondaryBuffer.ClearBuffer());
     }
     else
     {
-        return(_secondaryBuffer.ClearBuffer());
+        return(_primaryBuffer.ClearBuffer());
     }
 }
 
