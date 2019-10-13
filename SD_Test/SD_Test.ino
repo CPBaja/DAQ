@@ -34,8 +34,10 @@ void setup()
      Serial.setTimeout(1000);
      SD.begin(BUILTIN_SDCARD);
      
-     // Allow serial port to setup.
-     delay(1000);
+    while(!Serial)
+    {
+        ; // Wait for serial port to connect. Needed for native USB port only.
+    }
 
 }
 

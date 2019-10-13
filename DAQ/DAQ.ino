@@ -7,10 +7,10 @@
 
 /* Sensor Parameters */
 // If you want to read as fast as possible, set timeDelay to 0.
-const int readingsPerSecond = 100;
+const int readingsPerSecond = 1000;
 // int(1000000 / readingsPerSecond * 0.95) is the formula.
-// We just need to be within 95% of the correct time delay and we'll be fine.
-const int timeDelay = int(1000000 / readingsPerSecond * 0.95);
+// 0.95 relates to the the timing precision, i.e. within 95% of the interval.
+const int timeDelay = int(1000000 / readingsPerSecond * 1);
 Sensor sens0(14, 'A', timeDelay);
 Sensor sens1(15, 'B', timeDelay);
 Sensor sens2(16, 'C', timeDelay);
@@ -58,7 +58,6 @@ void loop()
         }
 
         // One reading for every sensor will be slightly delayed when we output data.
-        // 
         if(allSensors[i]->IsFull())
         {
             allSensors[i]->PrintSensor();

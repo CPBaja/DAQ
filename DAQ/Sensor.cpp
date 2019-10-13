@@ -20,7 +20,7 @@ void Sensor::ReadSensor()
 {
     int reading = analogRead(_pin);
     _lastTimestamp = micros();
-    _buffer.Append(reading, _lastTimestamp);
+    _buffer.Append(reading, millis());
 }
 
 bool Sensor::IsFull()
