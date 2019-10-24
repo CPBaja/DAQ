@@ -7,7 +7,7 @@
 
 /* Sensor Parameters */
 // If you want to read as fast as possible, set timeDelay to 0.
-const int readingsPerSecond = 1000;
+const int readingsPerSecond = 100;
 // int(1000000 / readingsPerSecond * 0.95) is the formula.
 // 0.95 relates to the the timing precision, i.e. within 95% of the interval.
 const int timeDelay = int(1000000 / readingsPerSecond * 1);
@@ -22,25 +22,25 @@ Sensor sens7(21, 'H', timeDelay);
 Sensor sens8(22, 'I', timeDelay);
 Sensor sens9(23, 'J', timeDelay);
 
-const int sensorCount = 10;
-Sensor * allSensors[sensorCount] = {&sens0, &sens1, &sens2, &sens3, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
+const int sensorCount = 2;
+Sensor * allSensors[sensorCount] = {&sens0, &sens1};//, &sens2, &sens3, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
 
 /* SD Card Parameters */
 const int chipSelect = BUILTIN_SDCARD;
 unsigned long fileNameChangeTime;
 const unsigned long fileNameChangeInterval = 1000000;
 int fileNameCounter = 0;
-String saveFileName = "0.txt";
+String saveFileName = "Lab4-0.bin";
 
 void setup()
 {
     Serial.begin(9600);
     SD.begin(chipSelect);
 
-    while(!Serial)
-    {
-        ; // Wait for serial port to connect. Needed for native USB port only.
-    }
+    //while(!Serial)
+    //{
+        //; // Wait for serial port to connect. Needed for native USB port only.
+    //}
     
     fileNameChangeTime = micros();
 }
@@ -72,7 +72,7 @@ void updateFileName()
     if(micros() - fileNameChangeTime > fileNameChangeInterval)
     {
         fileNameCounter++;
-        saveFileName = String(fileNameCounter) + ".txt";
+        saveFileName = String(fileNameCounter) + ".bin";
         fileNameChangeTime = micros();
     }
 }

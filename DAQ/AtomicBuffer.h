@@ -11,7 +11,6 @@ class AtomicBuffer
         void SetIdentifier(char identifier);
         int Append(int value, unsigned long timestamp);
         int GetValue(int index);
-        unsigned long GetTime(int index);
         int GetSize();
         void PrintBuffer();
         void WriteBufferToSD(String fileName);

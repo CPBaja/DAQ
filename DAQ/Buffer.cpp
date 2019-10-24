@@ -6,6 +6,7 @@
 // Constructor for the buffer.
 Buffer::Buffer()
 {
+    _initialTime = 0;
     _headIndex = 0;
 }
 
@@ -21,7 +22,10 @@ int Buffer::Append(int value, unsigned long timestamp)
     if(_headIndex < _maxSize)
     {
         _dataBuf[_headIndex] = value;
-        _timeBuf[_headIndex] = timestamp;
+        if(_initialTime == 0)
+        {
+            _initialTime = timestamp;
+        }
         _headIndex+=1;
     }
     return(_maxSize - _headIndex);
@@ -31,12 +35,6 @@ int Buffer::Append(int value, unsigned long timestamp)
 int Buffer::GetValue(int index)
 {
     return(_dataBuf[index]);
-}
-
-// Returns the value of a time at the index.
-unsigned long Buffer::GetTime(int index)
-{
-    return(_timeBuf[index]);
 }
 
 // Returns the number of items in the buffer.
@@ -54,14 +52,14 @@ void Buffer::PrintBuffer()
 {
     Serial.print(_identifier);
     Serial.print(":");
+    Serial.print(_initialTime);
     for(int index = 0;index < _maxSize;index++)
     {
+        Serial.print(":");
         Serial.print(_dataBuf[index]);
-        Serial.print(":");
-        Serial.print(_timeBuf[index]);
-        Serial.print(":");
     }
-    Serial.println();
+    Serial.print(":");
+    Serial.println(micros());
 }
 
 void Buffer::WriteBufferToSD(String fileName)
@@ -70,25 +68,24 @@ void Buffer::WriteBufferToSD(String fileName)
     fileName.toCharArray(__dataFileName, sizeof(__dataFileName));
     File file = SD.open(__dataFileName, FILE_WRITE);
     
-    file.print(_identifier);
-    file.print(":");
+    file.write(_identifier);
+    file.write((byte*)&_initialTime, sizeof(unsigned long));
     
     for(int index = 0;index < _headIndex;index++)
     {
-        file.print(_dataBuf[index]);
-        file.print(":");
-        file.print(_timeBuf[index]);
-        file.print(":");
+        file.write((byte*)&_dataBuf[index], sizeof(int));
     }
-    file.print('\n');
+    unsigned long curTime = micros();
+    file.write((byte*)&curTime, sizeof(unsigned long));
     
     file.flush();
     file.close();
 }
 
-// 'Clears' the buffer. Really just resets the head index. Very fast.
+// 'Clears' the buffer. Really just resets the head index and timestamp. Very fast.
 // Slow implementation would be iterating through the buffer, and setting each value to null.
 void Buffer::ClearBuffer()
 {
+    _initialTime = 0;
     _headIndex = 0;
 }

@@ -16,7 +16,6 @@ class Buffer
         void SetIdentifier(char identifier);
         int Append(int value, unsigned long timestamp);
         int GetValue(int index);
-        unsigned long GetTime(int index);
         int GetSize();
         int GetMaxSize();
         void PrintBuffer();
@@ -26,7 +25,7 @@ class Buffer
     private:
         char _identifier;
         int _dataBuf[_maxSize];
-        unsigned long _timeBuf[_maxSize];
+        unsigned long _initialTime;
         int _headIndex;
 };
 

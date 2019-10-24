@@ -6,6 +6,9 @@
 # Compiled object files.
 *.o
 
+# Extra data files.
+*.csv
+
 # Mac
 .DS_Store
 

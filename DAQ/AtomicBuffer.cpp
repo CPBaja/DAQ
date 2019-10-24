@@ -41,19 +41,6 @@ int AtomicBuffer::GetValue(int index)
     }
 }
 
-// Returns the value of a time at the index.
-unsigned long AtomicBuffer::GetTime(int index)
-{
-    if(_currentBuffer == '0')
-    {
-        return(_primaryBuffer.GetTime(index));
-    }
-    else
-    {
-        return(_secondaryBuffer.GetTime(index));
-    }
-}
-
 // Returns the number of items in the buffer.
 int AtomicBuffer::GetSize()
 {

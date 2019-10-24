@@ -1,6 +1,6 @@
 #include <SD.h>
 
-const String DATA = "F";
+const int DATA = 1023;
 
 File file;
 
@@ -10,11 +10,10 @@ void writeToSD(String fileName, int dataWriteSize)
     fileName.toCharArray(__dataFileName, sizeof(__dataFileName));
     file = SD.open(__dataFileName, FILE_WRITE);
     
-    for(int i = 0;i < dataWriteSize - 1;i++)
+    for(int i = 0;i < dataWriteSize;i++)
     {
-        file.print(DATA);
+        file.write((byte*)&DATA, sizeof(int));
     }
-    file.print('\n');
     
     file.flush();
     file.close();
@@ -45,7 +44,7 @@ void loop()
 {
     while(Serial.available() > 0)
     {
-      String fileName = "test2.txt";
+      String fileName = "sd_test2.bin";
       // The SD library writes data in 512 byte blocks.
       // Setting the DATA_WRITE_SIZE larger than 512 may cause the buffer to be overwritten.
       int dataWriteSize = Serial.parseInt();
