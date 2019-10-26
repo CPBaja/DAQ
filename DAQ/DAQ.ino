@@ -7,30 +7,32 @@
 /* Sensor Parameters */
 // If you want to read as fast as possible, set timeDelay to 0.
 const int readingsPerSecond = 100;
-// int(1000000 / readingsPerSecond * 0.95) is the formula.
-// 0.95 relates to the the timing precision, i.e. within 95% of the interval.
 const int timeDelay = 0;//int(1000000 / readingsPerSecond * 1);
-Sensor sens0(14, 'Z', timeDelay);
-Sensor sens1(15, 'B', timeDelay);
-Sensor sens2(16, 'C', timeDelay);
-Sensor sens3(17, 'D', timeDelay);
-Sensor sens4(18, 'E', timeDelay);
-Sensor sens5(19, 'F', timeDelay);
-Sensor sens6(20, 'G', timeDelay);
-Sensor sens7(21, 'H', timeDelay);
-Sensor sens8(22, 'I', timeDelay);
-Sensor sens9(23, 'J', timeDelay);
+Sensor sens0(14, timeDelay);
+Sensor sens1(15, timeDelay);
+Sensor sens2(16, timeDelay);
+Sensor sens3(17, timeDelay);
+Sensor sens4(18, timeDelay);
+Sensor sens5(19, timeDelay);
+Sensor sens6(20, timeDelay);
+Sensor sens7(21, timeDelay);
+Sensor sens8(22, timeDelay);
+Sensor sens9(23, timeDelay);
+unsigned long readingStartTime;
 
-const int sensorCount = 6;
-//Sensor * allSensors[sensorCount] = {&sens0, &sens1, &sens2, &sens3, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
-Sensor * allSensors[sensorCount] = {&sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
+const int sensorCount = 10;
+Sensor * allSensors[sensorCount] = {&sens0, &sens1, &sens2, &sens3, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
+//Sensor * allSensors[sensorCount] = {&sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
 
 /* SD Card Parameters */
 const int chipSelect = BUILTIN_SDCARD;
 unsigned long fileNameChangeTime;
 const unsigned long fileNameChangeInterval = 1000000;
 int fileNameCounter = 0;
-String saveFileName = "B0.bin";
+String saveFileName = "F0.bin";
+const bool writeToFile = true;
+const bool writeToSerial = false;
+int count = 0;
 
 void setup()
 {
@@ -43,6 +45,7 @@ void setup()
     //}
     
     fileNameChangeTime = micros();
+    readingStartTime = micros();
 }
 
 void loop()
@@ -56,14 +59,47 @@ void loop()
         {
             allSensors[i]->ReadSensor();
         }
+    }
 
-        // One reading for every sensor will be slightly delayed when we output data.
-        if(allSensors[i]->IsFull())
+    if(allSensors[0]->IsFull() && writeToFile)
+    {
+        if(writeToFile)
         {
-            allSensors[i]->PrintSensor();
-            allSensors[i]->WriteSensorToSD(saveFileName);
+            char __dataFileName[sizeof(saveFileName)];
+            saveFileName.toCharArray(__dataFileName, sizeof(__dataFileName));
+            File file = SD.open(__dataFileName, FILE_WRITE);
+            
+            unsigned long readingEndTime = micros();
+            
+            file.write((byte*)&readingStartTime, sizeof(unsigned long));
+    
+            for(int i = 0;i < sensorCount;i++)
+            {
+                allSensors[i]->WriteSensorToSD(&file);
+            }
+    
+            file.write((byte*)&readingEndTime, sizeof(unsigned long));
+            
+            file.close();
+        }
+        if(writeToSerial)
+        {
+            Serial.println(readingStartTime);
+            for(int i = 0;i < sensorCount;i++)
+            {
+                allSensors[i]->PrintSensor();
+            }
+            Serial.println(micros());
+        }
+
+        for(int i = 0;i < sensorCount;i++)
+        {
             allSensors[i]->ClearSensor();
         }
+        readingStartTime = micros();
+        count++;
+        Serial.println(count);
+        Serial.println(micros());
     }
 }
 

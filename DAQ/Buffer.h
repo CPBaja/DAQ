@@ -14,18 +14,17 @@ class Buffer
     public:
         Buffer();
         void SetIdentifier(char identifier);
-        int Append(int value, unsigned long timestamp);
+        int Append(int value);
         int GetValue(int index);
         int GetSize();
         int GetMaxSize();
         void PrintBuffer();
-        void WriteBufferToSD(String fileName);
+        void WriteBufferToSD(File * file);
         void ClearBuffer();
      
     private:
         char _identifier;
-        int _dataBuf[_maxSize];
-        unsigned long _initialTime;
+        short int _dataBuf[_maxSize];
         int _headIndex;
 };
 
