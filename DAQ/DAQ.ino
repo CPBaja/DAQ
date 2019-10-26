@@ -2,7 +2,6 @@
 #include <SD.h>
 
 #include "Buffer.h"
-#include "AtomicBuffer.h"
 #include "Sensor.h"
 
 /* Sensor Parameters */
@@ -10,8 +9,8 @@
 const int readingsPerSecond = 100;
 // int(1000000 / readingsPerSecond * 0.95) is the formula.
 // 0.95 relates to the the timing precision, i.e. within 95% of the interval.
-const int timeDelay = int(1000000 / readingsPerSecond * 1);
-Sensor sens0(14, 'A', timeDelay);
+const int timeDelay = 0;//int(1000000 / readingsPerSecond * 1);
+Sensor sens0(14, 'Z', timeDelay);
 Sensor sens1(15, 'B', timeDelay);
 Sensor sens2(16, 'C', timeDelay);
 Sensor sens3(17, 'D', timeDelay);
@@ -22,15 +21,16 @@ Sensor sens7(21, 'H', timeDelay);
 Sensor sens8(22, 'I', timeDelay);
 Sensor sens9(23, 'J', timeDelay);
 
-const int sensorCount = 2;
-Sensor * allSensors[sensorCount] = {&sens0, &sens1};//, &sens2, &sens3, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
+const int sensorCount = 6;
+//Sensor * allSensors[sensorCount] = {&sens0, &sens1, &sens2, &sens3, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
+Sensor * allSensors[sensorCount] = {&sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
 
 /* SD Card Parameters */
 const int chipSelect = BUILTIN_SDCARD;
 unsigned long fileNameChangeTime;
 const unsigned long fileNameChangeInterval = 1000000;
 int fileNameCounter = 0;
-String saveFileName = "Lab4-0.bin";
+String saveFileName = "B0.bin";
 
 void setup()
 {

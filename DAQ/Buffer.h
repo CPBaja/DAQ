@@ -6,7 +6,7 @@
 
 #include "Buffer.h"
 
-const int _maxSize = 100;
+const int _maxSize = 1000;
 
 class Buffer  
 {
