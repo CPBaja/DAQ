@@ -22,7 +22,6 @@ unsigned long readingStartTime;
 
 const int sensorCount = 10;
 Sensor * allSensors[sensorCount] = {&sens0, &sens1, &sens2, &sens3, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
-//Sensor * allSensors[sensorCount] = {&sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
 
 /* SD Card Parameters */
 const int chipSelect = BUILTIN_SDCARD;
@@ -32,17 +31,16 @@ int fileNameCounter = 0;
 String saveFileName = "F0.bin";
 const bool writeToFile = true;
 const bool writeToSerial = false;
-int count = 0;
 
 void setup()
 {
     Serial.begin(9600);
     SD.begin(chipSelect);
 
-    //while(!Serial)
-    //{
-        //; // Wait for serial port to connect. Needed for native USB port only.
-    //}
+    /*while(!Serial)
+    {
+        ; // Wait for serial port to connect. Needed for native USB port only.
+    }*/
     
     fileNameChangeTime = micros();
     readingStartTime = micros();
@@ -51,7 +49,6 @@ void setup()
 void loop()
 {
     // Checks each sensor to see if they're ready to read.
-    // Could be slightly faster if we know every sensor has the same interval.
     // If the sensor is ready to read, it'll read.
     for(int i = 0;i < sensorCount;i++)
     {
@@ -61,7 +58,7 @@ void loop()
         }
     }
 
-    if(allSensors[0]->IsFull() && writeToFile)
+    if(allSensors[0]->IsFull())
     {
         if(writeToFile)
         {
@@ -97,9 +94,6 @@ void loop()
             allSensors[i]->ClearSensor();
         }
         readingStartTime = micros();
-        count++;
-        Serial.println(count);
-        Serial.println(micros());
     }
 }
 
