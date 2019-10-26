@@ -15,44 +15,64 @@ if(not os.path.exists(args.input)):
     print("File \"{0}\" could not be found.".format(args.input))
 
 
+sensorCount = 10
 bufferCount = 1000
 charSize = 1
 ulongSize = 4
-intSize = 4
-sensorsEmptied = set()
+shortIntSize = 2
+headerWritten = False
+dataSize = ulongSize + sensorCount * (charSize + bufferCount * shortIntSize) + ulongSize
 
-dataSize = charSize + bufferCount * intSize + ulongSize * 2
-print(dataSize)
+with open("output.csv", "w+") as f:
+    pass
 
-with open(args.input, "rb") as f:
-    while True:
-        #sensor = f.read(charSize).decode("utf-8")
-        bytes_obj = f.read(dataSize)
-
-        if(bytes_obj is ""):
-            break
-        else:
-            sensor = chr(bytes_obj[0])
-            if(sensor not in sensorsEmptied):
-                sensorsEmptied.add(sensor)
-                with open("{0}_output.csv".format(sensor), "w+") as empty:
-                    pass
+parserStartTime = time.time()
+try:
+    with open(args.input, "rb") as binaryFile:
+        while True:
+            dataBytes = binaryFile.read(dataSize)
+            if(len(dataBytes) == 0):
+                break
             
-        timeStampStart = int.from_bytes(bytes_obj[charSize: charSize + ulongSize], byteorder='little')
-        data = []
-        for i in range(bufferCount):
-            data.append(int.from_bytes(bytes_obj[charSize + ulongSize + i * intSize: charSize + ulongSize + (i + 1) * intSize], byteorder='little'))
-        timeStampFinish = int.from_bytes(bytes_obj[charSize + ulongSize + intSize * bufferCount: charSize + ulongSize + intSize * bufferCount + ulongSize], byteorder='little')
-        
-        
-        print(sensor)
-        print(data)
-        print(timeStampStart)
-        print(timeStampFinish)
-        
-        for i in range(len(data)):
-            reading = int(data[i])
-            time = int(timeStampStart + (timeStampFinish - timeStampStart) * i / len(data))
-            with open("{0}_output.csv".format(sensor), "a+") as oF:
-                oF.write("{0}, {1}, {2}\n".format(sensor, reading, time))
+            dataDict = {
+                "Time":[]
+            }
+            timeStampStart = int.from_bytes(dataBytes[0:ulongSize], byteorder='little')
+            sensorSize = charSize + bufferCount * shortIntSize
 
+            for i in range(sensorCount):
+                sensorOffset = i * (charSize + bufferCount * shortIntSize) + ulongSize
+                sensor = str(int.from_bytes(dataBytes[sensorOffset:sensorOffset + charSize], byteorder='little'))
+                data = []
+                for x in range(bufferCount):
+                    data.append(int.from_bytes(dataBytes[sensorOffset + charSize + x * shortIntSize:sensorOffset + charSize + (x + 1) * shortIntSize], byteorder='little'))
+
+                dataDict[sensor] = data
+            
+            timeStampEnd = int.from_bytes(dataBytes[dataSize - ulongSize:dataSize], byteorder='little')
+            
+            if(timeStampEnd == 0):
+                break
+            
+            dataDict["Time"] = [int(timeStampStart + (timeStampEnd - timeStampStart) * i / bufferCount) for i in range(bufferCount)]
+            
+            with open("output.csv", "a+") as csvFile:
+                header = []
+                for key in dataDict:
+                    header.append(key)
+                
+                if(not headerWritten):
+                    csvFile.write(",".join(header))
+                    csvFile.write("\n")
+                    headerWritten = True
+                
+                for z in range(bufferCount):
+                    lineData = []
+                    for key in dataDict:
+                        lineData.append(str(dataDict[key][z]))
+                    csvFile.write(",".join(lineData))
+                    csvFile.write("\n")
+            
+
+finally:
+    print("Done parsing data in {0} seconds.".format(time.time() - parserStartTime))

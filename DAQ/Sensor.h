@@ -9,12 +9,12 @@ class Sensor
 {
 
     public:
-        Sensor(const int pin, char identifier, unsigned long microTimeInterval);
+        Sensor(const int pin, unsigned long microTimeInterval);
         bool ReadyToRead();
         void ReadSensor();
         bool IsFull();
         void PrintSensor();
-        void WriteSensorToSD(String fileName);
+        void WriteSensorToSD(File * file);
         void ClearSensor();
      
     private:
