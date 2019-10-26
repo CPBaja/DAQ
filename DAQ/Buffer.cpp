@@ -6,7 +6,6 @@
 // Constructor for the buffer.
 Buffer::Buffer()
 {
-    _initialTime = 0;
     _headIndex = 0;
 }
 
@@ -17,15 +16,11 @@ void Buffer::SetIdentifier(char identifier)
 
 // Appends a value to the end of the buffer.
 // Doesn't append the value if the buffer is full.
-int Buffer::Append(int value, unsigned long timestamp)
+int Buffer::Append(int value)
 {
     if(_headIndex < _maxSize)
     {
         _dataBuf[_headIndex] = value;
-        if(_initialTime == 0)
-        {
-            _initialTime = timestamp;
-        }
         _headIndex+=1;
     }
     return(_maxSize - _headIndex);
@@ -50,9 +45,7 @@ int Buffer::GetMaxSize()
 
 void Buffer::PrintBuffer()
 {
-    Serial.print(_identifier);
-    Serial.print(":");
-    Serial.print(_initialTime);
+    Serial.print(int(_identifier));
     for(int index = 0;index < _maxSize;index++)
     {
         Serial.print(":");
@@ -62,30 +55,21 @@ void Buffer::PrintBuffer()
     Serial.println(micros());
 }
 
-void Buffer::WriteBufferToSD(String fileName)
-{
-    char __dataFileName[sizeof(fileName)];
-    fileName.toCharArray(__dataFileName, sizeof(__dataFileName));
-    File file = SD.open(__dataFileName, FILE_WRITE);
-    
-    file.write(_identifier);
-    file.write((byte*)&_initialTime, sizeof(unsigned long));
+void Buffer::WriteBufferToSD(File * file)
+{    
+    file->write(_identifier);
     
     for(int index = 0;index < _headIndex;index++)
     {
-        file.write((byte*)&_dataBuf[index], sizeof(int));
+        file->write((byte*)&_dataBuf[index], sizeof(short int));
     }
-    unsigned long curTime = micros();
-    file.write((byte*)&curTime, sizeof(unsigned long));
     
-    file.flush();
-    file.close();
+    file->flush();
 }
 
-// 'Clears' the buffer. Really just resets the head index and timestamp. Very fast.
+// 'Clears' the buffer. Really just resets the head index. Very fast.
 // Slow implementation would be iterating through the buffer, and setting each value to null.
 void Buffer::ClearBuffer()
 {
-    _initialTime = 0;
     _headIndex = 0;
 }
