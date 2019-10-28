@@ -20,17 +20,19 @@ Sensor sens8(22, timeDelay);
 Sensor sens9(23, timeDelay);
 unsigned long readingStartTime;
 
-const int sensorCount = 10;
-Sensor * allSensors[sensorCount] = {&sens0, &sens1, &sens2, &sens3, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
+const int sensorCount = 9;
+Sensor * allSensors[sensorCount] = {&sens0, &sens1, &sens2, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
 
 /* SD Card Parameters */
 const int chipSelect = BUILTIN_SDCARD;
 unsigned long fileNameChangeTime;
 const unsigned long fileNameChangeInterval = 1000000;
 int fileNameCounter = 0;
-String saveFileName = "F0.bin";
+String saveFileName = "Beta_0.bin";
+
+/* General I/O Parameters */
 const bool writeToFile = true;
-const bool writeToSerial = false;
+const bool writeToSerial = true;
 
 void setup()
 {
@@ -62,31 +64,11 @@ void loop()
     {
         if(writeToFile)
         {
-            char __dataFileName[sizeof(saveFileName)];
-            saveFileName.toCharArray(__dataFileName, sizeof(__dataFileName));
-            File file = SD.open(__dataFileName, FILE_WRITE);
-            
-            unsigned long readingEndTime = micros();
-            
-            file.write((byte*)&readingStartTime, sizeof(unsigned long));
-    
-            for(int i = 0;i < sensorCount;i++)
-            {
-                allSensors[i]->WriteSensorToSD(&file);
-            }
-    
-            file.write((byte*)&readingEndTime, sizeof(unsigned long));
-            
-            file.close();
+            writeSensorsToFile();
         }
         if(writeToSerial)
         {
-            Serial.println(readingStartTime);
-            for(int i = 0;i < sensorCount;i++)
-            {
-                allSensors[i]->PrintSensor();
-            }
-            Serial.println(micros());
+            writeSensorsToSerial();
         }
 
         for(int i = 0;i < sensorCount;i++)
@@ -95,6 +77,36 @@ void loop()
         }
         readingStartTime = micros();
     }
+}
+
+void writeSensorsToFile()
+{
+    char __dataFileName[sizeof(saveFileName)];
+    saveFileName.toCharArray(__dataFileName, sizeof(__dataFileName));
+    File file = SD.open(__dataFileName, FILE_WRITE);
+    
+    unsigned long readingEndTime = micros();
+    
+    file.write((byte*)&readingStartTime, sizeof(unsigned long));
+    
+    for(int i = 0;i < sensorCount;i++)
+    {
+        allSensors[i]->WriteSensorToSD(&file);
+    }
+    
+    file.write((byte*)&readingEndTime, sizeof(unsigned long));
+    
+    file.close();
+}
+
+void writeSensorsToSerial()
+{
+    Serial.println(readingStartTime);
+    for(int i = 0;i < sensorCount;i++)
+    {
+        allSensors[i]->PrintSensor();
+    }
+    Serial.println(micros());
 }
 
 void updateFileName()

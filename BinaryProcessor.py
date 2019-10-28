@@ -14,8 +14,20 @@ if not args.input:
 if(not os.path.exists(args.input)):
     print("File \"{0}\" could not be found.".format(args.input))
 
+pinDict = {
+    14: "Front Right Pot",
+    15: "Back Right Pot",
+    16: "Steering Pot",
+    17: "Not In Use",
+    18: "Fx",
+    19: "Fy",
+    20: "Fz",
+    21: "Mx",
+    22: "My",
+    23: "Mz"
+}
 
-sensorCount = 10
+sensorCount = 9
 bufferCount = 1000
 charSize = 1
 ulongSize = 4
@@ -55,14 +67,17 @@ try:
                 break
             
             dataDict["Time"] = [int(timeStampStart + (timeStampEnd - timeStampStart) * i / bufferCount) for i in range(bufferCount)]
-            
+    
             with open("output.csv", "a+") as csvFile:
                 header = []
                 for key in dataDict:
-                    header.append(key)
+                    if(key == "Time"):
+                        header.append(key)
+                    else:
+                        header.append(pinDict[int(key)])
                 
                 if(not headerWritten):
-                    csvFile.write(",".join(header))
+                    csvFile.write(";".join(header))
                     csvFile.write("\n")
                     headerWritten = True
                 
@@ -70,7 +85,7 @@ try:
                     lineData = []
                     for key in dataDict:
                         lineData.append(str(dataDict[key][z]))
-                    csvFile.write(",".join(lineData))
+                    csvFile.write(";".join(lineData))
                     csvFile.write("\n")
             
 
