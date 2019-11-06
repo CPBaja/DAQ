@@ -28,12 +28,13 @@ pinDict = {
 }
 
 sensorCount = 9
-bufferCount = 1000
+bufferCount = 5000
 charSize = 1
 ulongSize = 4
 shortIntSize = 2
 headerWritten = False
 dataSize = ulongSize + sensorCount * (charSize + bufferCount * shortIntSize) + ulongSize
+
 
 with open("output.csv", "w+") as f:
     pass
@@ -68,26 +69,30 @@ try:
             
             dataDict["Time"] = [int(timeStampStart + (timeStampEnd - timeStampStart) * i / bufferCount) for i in range(bufferCount)]
     
-            with open("output.csv", "a+") as csvFile:
-                header = []
-                for key in dataDict:
-                    if(key == "Time"):
-                        header.append(key)
-                    else:
-                        header.append(pinDict[int(key)])
-                
-                if(not headerWritten):
-                    csvFile.write(";".join(header))
-                    csvFile.write("\n")
-                    headerWritten = True
-                
-                for z in range(bufferCount):
-                    lineData = []
+            try:
+                with open("output.csv", "a+") as csvFile:
+                    header = []
                     for key in dataDict:
-                        lineData.append(str(dataDict[key][z]))
-                    csvFile.write(";".join(lineData))
-                    csvFile.write("\n")
-            
-
+                        if(key == "Time"):
+                            header.append(key)
+                        else:
+                            header.append(pinDict[int(key)])
+                    
+                    if(not headerWritten):
+                        csvFile.write(";".join(header))
+                        csvFile.write("\n")
+                        headerWritten = True
+                    
+                    for z in range(bufferCount):
+                        lineData = []
+                        for key in dataDict:
+                            lineData.append(str(dataDict[key][z]))
+                        csvFile.write(";".join(lineData))
+                        csvFile.write("\n")
+            except Exception as E:
+                pass
+                #print(header)
+                #print(dataDict)
+                
 finally:
     print("Done parsing data in {0} seconds.".format(time.time() - parserStartTime))

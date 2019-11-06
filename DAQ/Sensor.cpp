@@ -23,6 +23,16 @@ void Sensor::ReadSensor()
     _buffer.Append(reading);
 }
 
+int Sensor::GetLastReading()
+{
+    return(_buffer.GetLastValue());
+}
+
+int Sensor::GetPin()
+{
+    return(_pin);
+}
+
 bool Sensor::IsFull()
 {
     return(_buffer.GetSize() == _buffer.GetMaxSize());
