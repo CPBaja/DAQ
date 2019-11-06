@@ -5,19 +5,19 @@
 #include "Sensor.h"
 
 /* Sensor Parameters */
-// If you want to read as fast as possible, set timeDelay to 0.
-const int readingsPerSecond = 100;
-const int timeDelay = 0;//int(1000000 / readingsPerSecond * 1);
-Sensor sens0(14, timeDelay);
-Sensor sens1(15, timeDelay);
-Sensor sens2(16, timeDelay);
-Sensor sens3(17, timeDelay);
-Sensor sens4(18, timeDelay);
-Sensor sens5(19, timeDelay);
-Sensor sens6(20, timeDelay);
-Sensor sens7(21, timeDelay);
-Sensor sens8(22, timeDelay);
-Sensor sens9(23, timeDelay);
+// If you want to read as fast as possible, set readingDelay to 0.
+const int readingsPerSecond = 1000;
+const int readingDelay = int(1000000 / readingsPerSecond * 1);
+Sensor sens0(14, readingDelay);
+Sensor sens1(15, readingDelay);
+Sensor sens2(16, readingDelay);
+Sensor sens3(17, readingDelay);
+Sensor sens4(18, readingDelay);
+Sensor sens5(19, readingDelay);
+Sensor sens6(20, readingDelay);
+Sensor sens7(21, readingDelay);
+Sensor sens8(22, readingDelay);
+Sensor sens9(23, readingDelay);
 unsigned long readingStartTime;
 
 const int sensorCount = 9;
@@ -28,24 +28,27 @@ const int chipSelect = BUILTIN_SDCARD;
 unsigned long fileNameChangeTime;
 const unsigned long fileNameChangeInterval = 1000000;
 int fileNameCounter = 0;
-String saveFileName = "Beta_0.bin";
+String saveFileName = "test9.bin";
+
+/* XBee Parameters */
+const int broadcastsPerSecond = 10;
+const int broadcastDelay = int(1000000 / broadcastsPerSecond);
+unsigned long broadcastStartTime;
 
 /* General I/O Parameters */
 const bool writeToFile = true;
-const bool writeToSerial = true;
+const bool writeToSerial = false;
+const bool xbeeBroadcast = false;
+int lastReaings[sensorCount];
 
 void setup()
 {
     Serial.begin(9600);
     SD.begin(chipSelect);
-
-    /*while(!Serial)
-    {
-        ; // Wait for serial port to connect. Needed for native USB port only.
-    }*/
     
     fileNameChangeTime = micros();
     readingStartTime = micros();
+    broadcastStartTime = micros();
 }
 
 void loop()
@@ -66,6 +69,7 @@ void loop()
         {
             writeSensorsToFile();
         }
+        
         if(writeToSerial)
         {
             writeSensorsToSerial();
@@ -77,6 +81,25 @@ void loop()
         }
         readingStartTime = micros();
     }
+
+    if(xbeeBroadcast)
+    {
+        if(abs(micros() - broadcastStartTime > broadcastDelay))
+        {
+            Serial.print(micros());
+            for(int i = 0;i < sensorCount;i++)
+            {
+                Serial.print(";");
+                Serial.print(allSensors[i]->GetPin());
+                Serial.print(";");
+                Serial.print(allSensors[i]->GetLastReading());
+            }
+            Serial.println();
+
+            broadcastStartTime = micros();
+        }
+    }
+    
 }
 
 void writeSensorsToFile()
@@ -88,6 +111,8 @@ void writeSensorsToFile()
     unsigned long readingEndTime = micros();
     
     file.write((byte*)&readingStartTime, sizeof(unsigned long));
+
+    file.flush();
     
     for(int i = 0;i < sensorCount;i++)
     {
@@ -95,6 +120,8 @@ void writeSensorsToFile()
     }
     
     file.write((byte*)&readingEndTime, sizeof(unsigned long));
+
+    file.flush();
     
     file.close();
 }

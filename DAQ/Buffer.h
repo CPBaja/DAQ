@@ -6,7 +6,7 @@
 
 #include "Buffer.h"
 
-const int _maxSize = 1000;
+const int _maxSize = 5000;
 
 class Buffer  
 {
@@ -15,6 +15,7 @@ class Buffer
         Buffer();
         void SetIdentifier(char identifier);
         int Append(int value);
+        int GetLastValue();
         int GetValue(int index);
         int GetSize();
         int GetMaxSize();

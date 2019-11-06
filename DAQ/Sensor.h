@@ -12,6 +12,8 @@ class Sensor
         Sensor(const int pin, unsigned long microTimeInterval);
         bool ReadyToRead();
         void ReadSensor();
+        int GetLastReading();
+        int GetPin();
         bool IsFull();
         void PrintSensor();
         void WriteSensorToSD(File * file);

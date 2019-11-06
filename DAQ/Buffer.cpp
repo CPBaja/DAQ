@@ -26,6 +26,12 @@ int Buffer::Append(int value)
     return(_maxSize - _headIndex);
 }
 
+// Returns the last value in the buffer.
+int Buffer::GetLastValue()
+{
+    return(_dataBuf[_headIndex]);
+}
+
 // Returns the value of an item at the index.
 int Buffer::GetValue(int index)
 {
@@ -57,12 +63,13 @@ void Buffer::PrintBuffer()
 
 void Buffer::WriteBufferToSD(File * file)
 {    
-    file->write(_identifier);
-    
-    for(int index = 0;index < _headIndex;index++)
-    {
-        file->write((byte*)&_dataBuf[index], sizeof(short int));
-    }
+    file->write(&_identifier, sizeof(char));
+    //Serial.println(sizeof(char));
+
+    file->flush();
+
+    file->write((byte*)&_dataBuf, sizeof(short int) * _maxSize);
+    //Serial.println(sizeof(short int) * _maxSize);
     
     file->flush();
 }
