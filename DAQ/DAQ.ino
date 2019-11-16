@@ -7,28 +7,27 @@
 /* Sensor Parameters */
 // If you want to read as fast as possible, set readingDelay to 0.
 const int readingsPerSecond = 1000;
-const int readingDelay = int(1000000 / readingsPerSecond * 1);
-Sensor sens0(14, readingDelay);
-Sensor sens1(15, readingDelay);
-Sensor sens2(16, readingDelay);
-Sensor sens3(17, readingDelay);
-Sensor sens4(18, readingDelay);
-Sensor sens5(19, readingDelay);
-Sensor sens6(20, readingDelay);
-Sensor sens7(21, readingDelay);
-Sensor sens8(22, readingDelay);
-Sensor sens9(23, readingDelay);
+const int readingDelay = int(1000000 / readingsPerSecond);
+Sensor frPot(14, readingDelay);
+Sensor brPot(15, readingDelay);
+Sensor sPot(16, readingDelay);
+Sensor fx(18, readingDelay);
+Sensor fy(19, readingDelay);
+Sensor fz(20, readingDelay);
+Sensor mx(21, readingDelay);
+Sensor my(22, readingDelay);
+Sensor mz(23, readingDelay);
 unsigned long readingStartTime;
 
 const int sensorCount = 9;
-Sensor * allSensors[sensorCount] = {&sens0, &sens1, &sens2, &sens4, &sens5, &sens6, &sens7, &sens8, &sens9};
+Sensor * allSensors[sensorCount] = {&frPot, &brPot, &sPot, &fx, &fy, &fz, &mx, &my, &mz};
 
 /* SD Card Parameters */
 const int chipSelect = BUILTIN_SDCARD;
 unsigned long fileNameChangeTime;
-const unsigned long fileNameChangeInterval = 1000000;
+const unsigned long fileNameChangeInterval = 0;
 int fileNameCounter = 0;
-String saveFileName = "test9.bin";
+String saveFileName = "0.bin";
 
 /* XBee Parameters */
 const int broadcastsPerSecond = 10;
@@ -38,17 +37,35 @@ unsigned long broadcastStartTime;
 /* General I/O Parameters */
 const bool writeToFile = true;
 const bool writeToSerial = false;
-const bool xbeeBroadcast = false;
+const bool xbeeBroadcast = true;
 int lastReaings[sensorCount];
 
 void setup()
 {
     Serial.begin(9600);
     SD.begin(chipSelect);
+
+    delay(1000);
     
     fileNameChangeTime = micros();
     readingStartTime = micros();
     broadcastStartTime = micros();
+
+    char __dataFileName[sizeof(saveFileName)];
+    saveFileName.toCharArray(__dataFileName, sizeof(__dataFileName));
+    while(true)
+    {
+        char __dataFileName[sizeof(saveFileName)];
+        saveFileName.toCharArray(__dataFileName, sizeof(__dataFileName));
+        if(SD.exists(__dataFileName))
+        {
+            updateFileName();
+        }
+        else
+        {
+            break;
+        }
+    }
 }
 
 void loop()

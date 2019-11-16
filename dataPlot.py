@@ -16,7 +16,7 @@ data = [time, frontRightPot, backRightPot, steeringPot, Fx, Fy, Fz, Mx, My, Mz]
 f_in = open(fileName, "r")
 head = []
 MIN_TIME = 0
-MAX_TIME = 30
+MAX_TIME = 600
 
 with open(fileName, "r") as f:
 	lines = f.readlines()
@@ -46,6 +46,7 @@ colors = ("red", "green", "blue")
 names = ("Pots", "Forces", "Moments")
 maxs = [0, 0, 0]
 mins = [1023, 1023, 1023]
+areas = [1, 25, 5]
 plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
 plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
@@ -66,13 +67,12 @@ for x in range(3):
 for x in range(3):
     plt.clf()
     for i in range(3 * x + 1, 3 * x + 4):
-        print(colors[i%3])
-        print(str(head[i]))
-        area = np.pi/50
         idata = [int(x) for x in data[i]]
-        plt.yticks(np.arange(mins[x], maxs[x], int((maxs[x] - mins[x]) / 10)))
-        plt.scatter(data[0], data[i], s=area, c=colors[i%3], alpha=0.9)
+        plt.yticks(np.arange(mins[x], maxs[x], max(int((maxs[x] - mins[x]) / 10), 1)))
+        plt.scatter(data[0], data[i], s=areas[i%3], c=colors[i%3], alpha=0.1, label=head[i])
         plt.title(names[x] + " by Time")
         plt.ylabel("Reading")
         plt.xlabel('Time (seconds)')
-        plt.savefig("test_2_" + names[x] + ".png")
+        plt.legend(loc='upper left')
+        plt.savefig("test_" + names[x] + ".png")
+        print(i, x)
