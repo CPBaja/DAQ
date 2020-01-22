@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <SD.h>
+#include <Bounce2.h>
 
 #include "Buffer.h"
 #include "Sensor.h"
@@ -41,12 +42,26 @@ const bool writeToSerial = false;
 const bool xbeeBroadcast = true;
 int lastReaings[sensorCount];
 
+/* Button Bouncing */
+Bounce debouncer = Bounce();
+const int button_pin = 2;
+const int led_pin = 4;
+const int button_time = 100;
+int ledState = LOW;
+
 void setup()
 {
     Serial.begin(9600);
     SD.begin(chipSelect);
 
     delay(1000);
+    
+    pinMode(button_pin,INPUT_PULLDOWN);
+    debouncer.attach(button_pin);
+    debouncer.interval(button_time);
+    
+    pinMode(led_pin,OUTPUT);
+    digitalWrite(led_pin,ledState);
     
     fileNameChangeTime = micros();
     readingStartTime = micros();
@@ -71,6 +86,21 @@ void setup()
 
 void loop()
 {
+    // Update the debouncer
+    debouncer.update();
+    if(debouncer.fell())
+    {
+        if(ledState == LOW)
+        {
+            ledState = HIGH;
+        }
+        else
+        {
+            ledState = LOW
+        }
+        digitalWrite(led_pin,ledState);
+    }
+    
     // Checks each sensor to see if they're ready to read.
     // If the sensor is ready to read, it'll read.
     for(int i = 0;i < sensorCount;i++)
