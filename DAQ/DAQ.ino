@@ -11,16 +11,17 @@ const int readingDelay = int(1000000 / readingsPerSecond);
 Sensor frPot(14, readingDelay);
 Sensor brPot(15, readingDelay);
 Sensor sPot(16, readingDelay);
-Sensor fx(18, readingDelay);
-Sensor fy(19, readingDelay);
-Sensor fz(20, readingDelay);
-Sensor mx(21, readingDelay);
-Sensor my(22, readingDelay);
-Sensor mz(23, readingDelay);
+Sensor fx(17, readingDelay);
+Sensor fy(18, readingDelay);
+Sensor fz(19, readingDelay);
+Sensor mx(20, readingDelay);
+Sensor my(21, readingDelay);
+Sensor mz(22, readingDelay);
+Sensor pos(23, readingDelay);
 unsigned long readingStartTime;
 
-const int sensorCount = 9;
-Sensor * allSensors[sensorCount] = {&frPot, &brPot, &sPot, &fx, &fy, &fz, &mx, &my, &mz};
+const int sensorCount = 10;
+Sensor * allSensors[sensorCount] = {&frPot, &brPot, &sPot, &fx, &fy, &fz, &mx, &my, &mz, &pos};
 
 /* SD Card Parameters */
 const int chipSelect = BUILTIN_SDCARD;
@@ -104,7 +105,7 @@ void loop()
         if(abs(micros() - broadcastStartTime > broadcastDelay))
         {
             Serial.print(micros());
-            for(int i = 0;i < sensorCount;i++)
+            for(int i = 3;i < sensorCount;i++)
             {
                 Serial.print(";");
                 Serial.print(allSensors[i]->GetPin());

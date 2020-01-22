@@ -13,7 +13,7 @@ Sensor::Sensor(const int pin, unsigned long microTimeInterval)
 
 bool Sensor::ReadyToRead()
 {
-    return(abs(micros() - _lastTimestamp) > _microTimeInterval);
+    return(micros() - _lastTimestamp > _microTimeInterval);
 }
 
 void Sensor::ReadSensor()
